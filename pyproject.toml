@@ -1,0 +1,14 @@
+[project]
+name = "shootndeliver"
+version = "0.1.0"
+description = "ShootNDeliver static marketing site (HTML/CSS/JS)"
+readme = "README.md"
+requires-python = ">=3.11"
+
+[dependency-groups]
+dev = [
+    "livereload>=2.6.3",
+]
+
+[tool.uv]
+package = false
