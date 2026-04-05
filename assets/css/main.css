@@ -26,32 +26,98 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* CAMERA INTRO (pure CSS — no JS dependency) */
+/* CAMERA INTRO — SVG fallback (pure CSS) OR optional real video (see assets/video/README.txt) */
 .intro-overlay {
   position: fixed; inset: 0;
-  background: #050505;
   z-index: 99999;
-  display: flex; align-items: center; justify-content: center;
-  flex-direction: column; gap: 0;
-  animation: introFadeOut 0.7s ease 3.8s forwards;
   pointer-events: none;
+}
+.intro-overlay.intro-fallback-active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0;
+  animation: introFadeOut 0.7s ease 3.8s forwards;
+  /* Warm charcoal + spotlight so dark camera reads clearly */
+  background-color: #151210;
+  background-image:
+    radial-gradient(ellipse 75% 70% at 50% 36%, rgba(200, 164, 110, 0.28) 0%, transparent 58%),
+    radial-gradient(ellipse 100% 85% at 50% 22%, rgba(255, 248, 240, 0.07) 0%, transparent 42%),
+    radial-gradient(ellipse 140% 90% at 50% 120%, rgba(0, 0, 0, 0.45) 0%, transparent 55%),
+    linear-gradient(180deg, #1c1916 0%, #12100e 100%);
+}
+.intro-overlay.intro-video-playing {
+  display: block;
+  animation: none;
+  background: #0a0a0a;
+}
+.intro-overlay.intro-exiting {
+  animation: introFadeOut 0.7s ease forwards !important;
+}
+.intro-real-video {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 2;
+}
+.intro-overlay.intro-video-playing .intro-real-video {
+  display: block;
+}
+.intro-overlay.intro-video-playing .intro-fallback {
+  display: none;
+}
+body.intro-video-active .intro-flash-overlay {
+  display: none !important;
+  animation: none !important;
+  opacity: 0 !important;
 }
 @keyframes introFadeOut {
   to { opacity: 0; visibility: hidden; }
 }
-/* SVG Camera */
+/* Intro stack (flat — no 3D transforms) */
+.intro-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: min(520px, 94vw);
+  margin-inline: auto;
+  text-align: center;
+}
 .intro-cam-svg {
-  width: 120px; height: 120px;
-  animation: camEntrance 0.6s var(--transition) both, camClick 0.35s ease 1s both;
+  width: min(300px, 78vw);
+  max-width: 100%;
+  display: block;
+  margin-inline: auto;
+  animation: camEntrance 0.75s var(--transition) both, camClick 0.32s ease 1s both;
+  filter:
+    drop-shadow(0 0 28px rgba(200, 164, 110, 0.35))
+    drop-shadow(0 0 56px rgba(200, 164, 110, 0.12))
+    drop-shadow(0 20px 40px rgba(0, 0, 0, 0.55));
+}
+.intro-cam-svg img {
+  width: 100%;
+  height: auto;
+  max-height: min(40vh, 300px);
+  object-fit: contain;
+  object-position: 50% 50%;
+  display: block;
+  margin-inline: auto;
 }
 @keyframes camEntrance {
-  from { opacity: 0; transform: scale(0.5) rotate(-10deg); }
-  to { opacity: 1; transform: scale(1) rotate(0deg); }
+  from { opacity: 0; transform: scale(0.88) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 @keyframes camClick {
   0%, 100% { transform: scale(1); }
-  30% { transform: scale(0.92) rotate(-2deg); }
-  60% { transform: scale(1.04) rotate(1deg); }
+  35% { transform: scale(0.97); }
+  65% { transform: scale(1.01); }
 }
 /* Flash */
 .intro-flash-overlay {
@@ -67,23 +133,27 @@ body {
   15% { opacity: 0.95; }
   100% { opacity: 0; }
 }
-/* Polaroid photo */
+/* Polaroid */
 .intro-polaroid {
-  width: 110px;
+  width: min(172px, 44vw);
   margin-top: 16px;
   opacity: 0;
   animation: polaroidSlide 1.2s var(--transition) 1.6s forwards;
+  align-self: center;
 }
 @keyframes polaroidSlide {
-  0% { opacity: 0; transform: translateY(-40px) rotate(-5deg) scale(0.7); }
-  50% { opacity: 1; transform: translateY(8px) rotate(2deg) scale(1.02); }
+  0% { opacity: 0; transform: translateY(-24px) rotate(-2deg) scale(0.88); }
+  55% { opacity: 1; transform: translateY(3px) rotate(0deg) scale(1); }
   100% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
 }
 .polaroid-frame {
-  background: #fff;
-  border-radius: 4px;
-  padding: 7px 7px 24px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  background: linear-gradient(165deg, #fff 0%, #f2f0ed 100%);
+  border-radius: 5px;
+  padding: 9px 9px 26px;
+  box-shadow:
+    0 4px 0 rgba(0, 0, 0, 0.06),
+    0 14px 40px rgba(0, 0, 0, 0.45),
+    0 28px 56px rgba(0, 0, 0, 0.2);
 }
 .polaroid-image {
   width: 100%; aspect-ratio: 4/3;
@@ -99,25 +169,64 @@ body {
 }
 .polaroid-label {
   font-family: var(--serif);
-  font-size: 0.5rem;
-  color: #888;
+  font-size: clamp(0.56rem, 2.1vw, 0.7rem);
+  color: #666;
   text-align: center;
-  margin-top: 5px;
-  letter-spacing: 2px;
+  margin-top: 6px;
+  letter-spacing: 0.14em;
   text-transform: lowercase;
 }
-/* Shutter sound text */
+/* Company name — liquid glass pill (flat motion) */
 .intro-text {
   font-family: var(--mono);
-  font-size: 0.6rem;
-  color: var(--text-muted);
-  letter-spacing: 5px;
+  font-size: clamp(0.68rem, 2.5vw, 0.88rem);
+  font-weight: 500;
+  color: rgba(248, 244, 238, 0.95);
+  letter-spacing: 0.36em;
   text-transform: uppercase;
-  margin-top: 28px;
+  margin-top: 20px;
   opacity: 0;
-  animation: fadeIn 0.5s ease 2.5s forwards;
+  animation: introTextFadeIn 0.55s ease 2.5s forwards;
+  align-self: center;
+  max-width: calc(100% - 16px);
+  line-height: 1.4;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.05) 42%,
+    rgba(200, 164, 110, 0.1) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 2px 12px rgba(200, 164, 110, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(18px) saturate(165%);
+  -webkit-backdrop-filter: blur(18px) saturate(165%);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
-@keyframes fadeIn { to { opacity: 1; } }
+@keyframes introTextFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-cam-svg,
+  .intro-polaroid,
+  .intro-text {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .intro-cam-svg,
+  .intro-polaroid,
+  .intro-text {
+    opacity: 1;
+    transform: none;
+  }
+}
 
 /* CUSTOM CURSOR */
 .cursor-dot {

@@ -9,32 +9,17 @@
 </head>
 <body>
 
-<!-- Camera Intro Animation (pure CSS — guaranteed to clear) -->
+<!-- Intro: optional real video (assets/video/intro.mp4|.webm) OR SVG fallback -->
 <div class="intro-flash-overlay"></div>
-<div class="intro-overlay" id="introOverlay">
-  <!-- SVG Camera Icon -->
+<div class="intro-overlay intro-fallback-active" id="introOverlay">
+  <video id="introRealVideo" class="intro-real-video" playsinline muted preload="auto" aria-hidden="true">
+    <source src="assets/video/intro.webm" type="video/webm"/>
+    <source src="assets/video/intro.mp4" type="video/mp4"/>
+  </video>
+  <div class="intro-fallback" id="introFallback">
+  <!-- Camera render (transparent PNG; regenerate: python scripts/process_intro_camera.py) -->
   <div class="intro-cam-svg">
-    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Camera body -->
-      <rect x="15" y="40" width="90" height="65" rx="10" fill="#c8a46e"/>
-      <rect x="15" y="40" width="90" height="65" rx="10" stroke="#9a7a42" stroke-width="1.5"/>
-      <!-- Viewfinder bump -->
-      <rect x="35" y="26" width="30" height="18" rx="5" fill="#9a7a42"/>
-      <!-- Flash -->
-      <rect x="75" y="30" width="16" height="10" rx="3" fill="#e2cc9c"/>
-      <!-- Shutter button -->
-      <circle cx="85" cy="28" r="5" fill="#c0392b"/>
-      <!-- Lens outer ring -->
-      <circle cx="60" cy="72" r="22" fill="#1a1510" stroke="#2a2018" stroke-width="2"/>
-      <!-- Lens middle ring -->
-      <circle cx="60" cy="72" r="16" fill="#0a0a0a" stroke="#2a2018" stroke-width="1"/>
-      <!-- Lens inner glass -->
-      <circle cx="60" cy="72" r="9" fill="#1a1510"/>
-      <!-- Lens reflection -->
-      <circle cx="56" cy="68" r="3" fill="rgba(200,164,110,0.25)"/>
-      <!-- Grip line -->
-      <line x1="20" y1="85" x2="20" y2="95" stroke="#9a7a42" stroke-width="2" stroke-linecap="round"/>
-    </svg>
+    <img src="assets/images/intro-camera.png" width="800" height="600" alt="" decoding="async" fetchpriority="high"/>
   </div>
   <!-- Polaroid photo slides out -->
   <div class="intro-polaroid">
@@ -43,7 +28,8 @@
       <div class="polaroid-label">shoot<b style="color:#c8a46e">N</b>deliver</div>
     </div>
   </div>
-  <div class="intro-text">click Â· deliver</div>
+  <div class="intro-text">SHOOT N DELIVER</div>
+  </div>
 </div>
 
 <!-- Noise Overlay -->
@@ -112,7 +98,7 @@
     <h2>We don't just take photos. We <strong>deliver memories</strong> — edited, polished, and in your hands within <strong>24 hours</strong>.</h2>
     <div class="promise-stats">
       <div class="stat">
-        <div class="stat-number" data-count="500">0</div>
+        <div class="stat-number" data-count="50">0</div>
         <div class="stat-label">Events Captured</div>
       </div>
       <div class="stat">
@@ -271,9 +257,6 @@
     <p>&copy; 2026 ShootNDeliver. All rights reserved.</p>
     <div class="social-links">
       <a href="#" class="social-link" aria-label="Instagram">IG</a>
-      <a href="#" class="social-link" aria-label="Facebook">FB</a>
-      <a href="#" class="social-link" aria-label="TikTok">TK</a>
-      <a href="#" class="social-link" aria-label="YouTube">YT</a>
     </div>
   </div>
 </footer>

@@ -21,6 +21,8 @@ shootndeliver/
 
 The public site is plain **HTML, CSS, and JavaScript**. Python and uv are only for local development tooling.
 
+**Optional realistic intro:** A filmed clip (person on a bike, taking a photo, etc.) can replace the illustrated intro. Add `assets/video/intro.mp4` and/or `intro.webm` — see `assets/video/README.txt`. Without those files, the existing SVG + polaroid intro is used.
+
 ## Features
 
 - **Camera Intro Animation** — SVG camera click → flash → polaroid print (pure CSS, under 4.5s)
@@ -37,7 +39,7 @@ The public site is plain **HTML, CSS, and JavaScript**. Python and uv are only f
 
 1. **Hero** — Tagline, CTA button, floating photos, 3D lens animation
 2. **Marquee** — Scrolling list of event types
-3. **Promise** — USP statement with animated stats (500+ events, 24hr, 100%)
+3. **Promise** — USP statement with animated stats (50+ events, 24hr, 100%)
 4. **Services** — 6 service cards (Wedding, Graduation, Events, Engagement, Family, Corporate)
 5. **Process** — 4-step timeline (Book → Shoot → Edit → Deliver)
 6. **CTA** — Call-to-action section

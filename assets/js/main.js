@@ -1,10 +1,84 @@
-// ═══════════════ INTRO CLEANUP ═══════════════
-setTimeout(() => {
-  const el = document.getElementById('introOverlay');
-  if (el) el.remove();
-  const fl = document.querySelector('.intro-flash-overlay');
-  if (fl) fl.remove();
-}, 5000);
+// ═══════════════ INTRO: optional real video OR SVG fallback ═══════════════
+(function initIntro() {
+  const overlay = document.getElementById('introOverlay');
+  const flash = document.querySelector('.intro-flash-overlay');
+  const video = document.getElementById('introRealVideo');
+
+  function removeIntroFromDom() {
+    overlay?.remove();
+    flash?.remove();
+    document.body.classList.remove('intro-video-active');
+  }
+
+  function exitIntroWithFade() {
+    if (!overlay) return;
+    overlay.classList.add('intro-exiting');
+    window.setTimeout(removeIntroFromDom, 750);
+  }
+
+  /** SVG-only path: same timing as before (~5s total) */
+  function scheduleSvgIntroRemoval() {
+    window.setTimeout(removeIntroFromDom, 5000);
+  }
+
+  if (!overlay || !video) {
+    scheduleSvgIntroRemoval();
+    return;
+  }
+
+  let svgRemovalScheduled = false;
+
+  function useVideoIntro() {
+    overlay.classList.remove('intro-fallback-active');
+    overlay.classList.add('intro-video-playing');
+    document.body.classList.add('intro-video-active');
+
+    video.addEventListener('ended', () => exitIntroWithFade(), { once: true });
+
+    video.play().catch(() => {
+      overlay.classList.remove('intro-video-playing');
+      overlay.classList.add('intro-fallback-active');
+      document.body.classList.remove('intro-video-active');
+      if (!svgRemovalScheduled) {
+        svgRemovalScheduled = true;
+        scheduleSvgIntroRemoval();
+      }
+    });
+  }
+
+  video.addEventListener(
+    'error',
+    () => {
+      if (!svgRemovalScheduled) {
+        svgRemovalScheduled = true;
+        scheduleSvgIntroRemoval();
+      }
+    },
+    { once: true }
+  );
+
+  video.addEventListener(
+    'loadeddata',
+    () => {
+      if (video.videoWidth > 0) useVideoIntro();
+      else if (!svgRemovalScheduled) {
+        svgRemovalScheduled = true;
+        scheduleSvgIntroRemoval();
+      }
+    },
+    { once: true }
+  );
+
+  /* No usable file / events: still tear down so the site is never stuck */
+  window.setTimeout(() => {
+    if (!overlay.classList.contains('intro-video-playing') && !svgRemovalScheduled) {
+      svgRemovalScheduled = true;
+      scheduleSvgIntroRemoval();
+    }
+  }, 12000);
+
+  video.load();
+})();
 
 // ═══════════════ CUSTOM CURSOR ═══════════════
 const dot = document.getElementById('cursorDot');
